@@ -1,0 +1,104 @@
+List of Necessary functions
+
+Frontend
+
+- Dashboard - Page that allows to quickly see what information is stored.
+- Entry page - Page that allows the entry of food information + price
+- Stock page - Tracks total amount of each item used
+- Data page - Allow people to see all of their tracked information on a day by day basis
+
+-- Required "Cards"
+   - Dash
+     Macro tracking "wheels"
+     Calorie tracking -> Current and Goal
+     Total calories in stock
+     Notifications box
+     
+   - Entry
+     Food information insertion + Price + Wastage
+     Meal insertion + Calculated cost
+     Meal picker
+     Track loss
+     
+   - Stock
+     Total calories remaining
+     Total calories of each macro
+     
+   - Data view
+     Breakdown stock usage per meal per day
+     Show total calories and macros for each meal and for each day
+
+   - Notifications
+     Notifications have a title, alert level and body
+     They report information such as too few calories or too much.
+
+- Custom CSS style for interface
+
+Backend
+
+- Food insertion
+  Somehow, basic food + its cost should be inserted and then tracked by Stock page
+  The main macros to focus on are Fat, Protien and Carbohydrates
+  This data could come either from nutrition labels with image processing or maybe manual insertion - If it has to be manual, notify Frontend
+  Price could also come from the same - maybe give items a number of aliases for mass trackign
+
+- Stock manager
+  The stock manager tags all inserted food
+  A food item must have
+    Primary Name
+    Reciept Alias
+    Price
+    Fat
+    Protein
+    Carbs
+  The stock manager should keep tally of how much of each item a person has
+      - It should keep track in grams and in units
+      - It should keep track of how much total calories are there - send notification
+      - It should keep track of how many total of each macro there is - send notification
+
+- Data processing
+  Image recognition - Unnecessary
+    A function that can extract the text from a receipt or a nutrition label, and pick the necessary values
+      - This is definitely the hardest part but i think Python has some OCR library
+    Once this data is found, The relevant details are extracted (Macros, calories for the food, and Price per unit/Per weight for reciept)
+    The name on the reciept is then tied to the nutrition information and the size/weight of the pack, and then this is sent to Stock
+    
+- Calorie processing
+    - Sum total calories
+    - Sum calories from each macro
+    - Check calories and macros against goal amounts - send notification
+    - Compute over/under and check if significantly low - send notification
+    - Compare calorie intake and weight over time
+
+- Price computation
+  -  compute cost of meals and total cost per day
+
+
+Data exchange formats
+
+Dashboard -> Expects payload
+	  {Total Calories,
+	  Goal Calories,
+	  Total Fat, Goal Fat
+	  Total Protien, Goal Protein,
+	  Total Carbs, Goal Carbs
+	  Total calories in stock,
+	  Notifications}
+
+
+Food item creation -> Expects
+     	  {Food Item Name,
+	  Reciept Allias,
+	  Price,
+	  Unit size/ Weight,
+	  Calories per 100,
+	  Fat per 100,
+	  Protien per 100,
+	  Carbs per 100}
+
+Reciept lookup -> Takes {Receipt Name, Price, Qty}
+	       Lookup Name in Alliases
+	       Add Qty of that item to stock
+	       Add in price
+
+Stock List -> Return everything in food item object where qty > 0
